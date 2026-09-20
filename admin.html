@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - NGOPI DULU</title>
+    <style>
+        :root {
+            --primary-color: #3e2723;
+            --accent-color: #d7ccc8;
+            --bg-color: #f7f5f0;
+            --card-bg: #ffffff;
+            --text-main: #2c2c2c;
+            --border-color: #e0d9d0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            letter-spacing: 0.5px;
+        }
+
+        .sales-box {
+            text-align: center;
+            background: linear-gradient(135deg, #3e2723 0%, #5d4037 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(62, 39, 35, 0.2);
+        }
+
+        .sales-box h2 {
+            color: #d7ccc8;
+            font-size: 16px;
+            margin: 0 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sales-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #81c784;
+            margin: 0;
+        }
+
+        .section-title {
+            font-size: 18px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-heading {
+            color: #5d4037;
+            font-size: 15px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .menu-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+            font-size: 14px;
+        }
+
+        .order-card {
+            background: #fff8e1;
+            border: 1px solid #ffe0b2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .order-card h3 {
+            text-align: left;
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: #3e2723;
+        }
+
+        .order-card p {
+            margin: 5px 0;
+            font-size: 13.5px;
+            color: #444;
+        }
+
+        button {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-green {
+            background: #2e7d32;
+        }
+
+        .btn-reset {
+            background: #b71c1c;
+            color: white;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #d32f2f;
+        }
+
+        .empty-text {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>☕ NGOPI DULU Admin</h1>
+        <p style="text-align: center; color: #666; font-size: 13px; margin-top: 0; margin-bottom: 20px;">Stock Control & Live Orders Management System</p>
+        
+        <!-- Jumlah Jualan -->
+        <div class="sales-box">
+            <h2>Today's Total Sales</h2>
+            <p class="sales-amount">RM <span id="total-sales">0.00</span></p>
+        </div>
+
+        <!-- Kawalan Stok -->
+        <div class="card">
+            <h2 class="section-title">Menu Stock Control</h2>
+            <div id="admin-menu-container"></div>
+        </div>
+
+        <!-- Pesanan Masuk (Live Orders) -->
+        <div class="card">
+            <h2 class="section-title">Live Orders</h2>
+            <div id="orders-container">
+                <p class="empty-text">No new orders at the moment.</p>
+            </div>
+        </div>
+
+        <!-- Bahagian Bawah: End Shift & Reset dengan Kata Laluan -->
+        <div class="card" style="text-align: center; background: #faf5f2;">
+            <h2 class="section-title" style="border-color: #d7ccc8;">Shift Management</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Tamatkan shif dan kosongkan data jualan untuk hari baru (Memerlukan kata laluan admin).</p>
+            <button class="btn-reset" onclick="resetShift()">🔒 End Shift / Reset New Day</button>
+        </div>
+    </div>
+
+    <script>
+        let adminCategories = [
+            {
+                category: "COFFEE",
+                items: [
+                    { id: 1, name: 'Cinnamon Latte', available: true },
+                    { id: 2, name: 'Spanish Latte', available: true },
+                    { id: 3, name: 'Hazelnut Latte', available: true },
+                    { id: 4, name: 'Caramel Latte', available: true },
+                    { id: 5, name: 'Cafe Latte / Flat White', available: true },
+                    { id: 6, name: 'Cappuccino', available: true },
+                    { id: 7, name: 'Americano / Long Black', available: true },
+                    { id: 8, name: 'Sparkling Americano', available: true },
+                    { id: 9, name: 'Mocha', available: true },
+                    { id: 10, name: 'Espresso', available: true }
+                ]
+            },
+            {
+                category: "NON COFFEE",
+                items: [
+                    { id: 11, name: 'Chocolate', available: true },
+                    { id: 12, name: 'Chocolate Hazelnut', available: true },
+                    { id: 13, name: 'Sparkling Yuzu', available: true },
+                    { id: 14, name: 'Sparkling Ribena', available: true },
+                    { id: 15, name: 'Ribena', available: true },
+                    { id: 16, name: 'Belgium Choc with Apple Fiber', available: true }
+                ]
+            },
+            {
+                category: "MATCHA",
+                items: [
+                    { id: 17, name: 'Matcha Latte', available: true },
+                    { id: 18, name: 'Matcha Strawberry', available: true }
+                ]
+            },
+            {
+                category: "SOFT COOKIES",
+                items: [
+                    { id: 19, name: 'Classic Choc Chip', available: true },
+                    { id: 20, name: 'S\'mores', available: true },
+                    { id: 21, name: 'Red Velvet Cheesecake', available: true }
+                ]
+            },
+            {
+                category: "BITES",
+                items: [
+                    { id: 22, name: 'Bagel with Cream Cheese', available: true },
+                    { id: 23, name: 'Mini Croissant', available: true },
+                    { id: 24, name: 'Koko Crunch with Milk', available: true },
+                    { id: 25, name: 'Ramen', available: true },
+                    { id: 26, name: 'Kaya Toast with Hard Boiled Egg', available: true },
+                    { id: 27, name: 'Kaya Toast', available: true },
+                    { id: 28, name: 'Nutella Toast', available: true },
+                    { id: 29, name: 'Maggie Cup', available: true },
+                    { id: 30, name: 'Indo Mee', available: true },
+                    { id: 31, name: 'Hard Boiled Egg', available: true }
+                ]
+            },
+            {
+                category: "ADD ON",
+                items: [
+                    { id: 32, name: 'Oatmilk', available: true },
+                    { id: 33, name: 'Extra Shot', available: true },
+                    { id: 34, name: 'Extra Syrup', available: true },
+                    { id: 35, name: 'Ice Water', available: true }
+                ]
+            }
+        ];
+
+        function renderAdminMenu() {
+            const container = document.getElementById('admin-menu-container');
+            container.innerHTML = '';
+
+            adminCategories.forEach(cat => {
+                let html = `<div class="category-heading">${cat.category}</div>`;
+                cat.items.forEach(item => {
+                    html += `
+                        <div class="menu-row">
+                            <span style="font-weight: 500;">${item.name}</span>
+                            <button class="${item.available ? '' : 'btn-green'}" onclick="toggleStock(${item.id})">
+                                ${item.available ? 'Set Sold Out' : 'Set Available'}
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML += html;
+            });
+        }
+
+        function toggleStock(id) {
+            adminCategories.forEach(cat => {
+                let item = cat.items.find(m => m.id === id);
+                if(item) {
+                    item.available = !item.available;
+                }
+            });
+            renderAdminMenu();
+        }
+
+        function loadOrders() {
+            let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
+            let ordersDiv = document.getElementById('orders-container');
+            let totalSales = 0;
+            
+            if (orders.length === 0) {
+                ordersDiv.innerHTML = '<p class="empty-text">No new orders at the moment.</p>';
+                document.getElementById('total-sales').innerText = '0.00';
+                return;
+            }
+
+            ordersDiv.innerHTML = '';
+            orders.forEach((ord, index) => {
+                totalSales += ord.total;
+                let itemDetails = ord.items.map(i => `${i.name} (RM ${i.price.toFixed(2)})`).join(', ');
+                ordersDiv.innerHTML += `
+                    <div class="order-card">
+                        <h3>Order ${ord.orderId} &bull; <span style="color: #d32f2f;">Table ${ord.table.replace('Meja ', '')}</span></h3>
+                        <p><strong>Items:</strong> ${itemDetails}</p>
+                        <p><strong>Payment Method:</strong> ${ord.paymentMethod}</p>
+                        <p><strong>Total Amount:</strong> RM ${ord.total.toFixed(2)}</p>
+                        <div style="margin-top: 10px; text-align: right;">
+                            <button class="btn-green" onclick="completeOrder(${index})">Mark as Completed</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('total-sales').innerText = totalSales.toFixed(2);
+        }
+
+        function completeOrder(index) {
+            let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
+            orders.splice(index, 1);
+            localStorage.setItem('cafe_orders', JSON.stringify(orders));
+            loadOrders();
+        }
+
+        // Fungsi Reset Shift / Hari Baru dengan Kata Laluan (0000)
+        function resetShift() {
+            let password = prompt("Masukkan kata laluan admin untuk End Shift & Reset (0000):");
+            
+            if (password === null) {
+                return; // Batal jika tekan cancel
+            }
+            
+            if (password === "0000") {
+                // Padam data pesanan aktif
+                localStorage.removeItem('cafe_orders');
+                localStorage.removeItem('cafe_accepted_orders');
+                
+                // Kemas kini paparan
+                loadOrders();
+                alert("Shif berjaya ditamatkan! Sedia untuk mula hari / shif baru.");
+            } else {
+                alert("Kata laluan salah! Reset dibatalkan.");
+            }
+        }
+
+        renderAdminMenu();
+        loadOrders();
+        
+        // Auto-refresh orders every 2 seconds
+        setInterval(loadOrders, 2000);
+    </script>
+</body>
+</html>
