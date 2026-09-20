@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cashier Counter - NGOPI DULU</title>
+    <style>
+        :root {
+            --primary-color: #3e2723;
+            --accent-color: #d7ccc8;
+            --bg-color: #f7f5f0;
+            --card-bg: #ffffff;
+            --text-main: #2c2c2c;
+            --border-color: #e0d9d0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 18px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--primary-color);
+        }
+
+        .order-card {
+            background: #fff8e1;
+            border: 1px solid #ffe0b2;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ffe0b2;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .order-id {
+            font-weight: bold;
+            color: #3e2723;
+            font-size: 16px;
+        }
+
+        .table-tag {
+            background: #d32f2f;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 10px 0;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            font-size: 14px;
+            border-bottom: 1px dashed #f0e6d2;
+        }
+
+        .item-name {
+            font-weight: 500;
+        }
+
+        .item-qty {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #ffe0b2;
+        }
+
+        .total-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .btn-accept {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-accept:hover {
+            opacity: 0.9;
+        }
+
+        .empty-text {
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖥️ NGOPI DULU - Cashier Counter</h1>
+        <p class="subtitle">Sistem Pengesahan & Kawalan Pesanan Masuk (QR & Counter)</p>
+        
+        <div class="card">
+            <h2 class="section-title">Pesanan Baru Masuk (Pending Acceptance)</h2>
+            <div id="cashier-orders-container">
+                <p class="empty-text">Tiada pesanan baru buat masa ini.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function loadCashierOrders() {
+            let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
+            let container = document.getElementById('cashier-orders-container');
+
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="empty-text">Tiada pesanan baru buat masa ini.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            orders.forEach((ord, index) => {
+                // Proses pengiraan ringkasan item (contoh: kumpul item yang sama jadi "Cafe Latte x2")
+                let itemCounts = {};
+                ord.items.forEach(i => {
+                    itemCounts[i.name] = (itemCounts[i.name] || 0) + 1;
+                });
+
+                let itemsHTML = '';
+                for (let [name, qty] of Object.entries(itemCounts)) {
+                    itemsHTML += `
+                        <li class="item-row">
+                            <span class="item-name">${name}</span>
+                            <span class="item-qty">x${qty}</span>
+                        </li>
+                    `;
+                }
+
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-id">Pesanan #${ord.orderId}</span>
+                            <span class="table-tag">${ord.table}</span>
+                        </div>
+                        <ul class="item-list">
+                            ${itemsHTML}
+                        </ul>
+                        <p style="margin: 5px 0; font-size: 13px; color: #555;">
+                            <strong>Kaedah Bayaran:</strong> ${ord.paymentMethod}
+                        </p>
+                        <div class="order-footer">
+                            <span class="total-price">Jumlah: RM ${ord.total.toFixed(2)}</span>
+                            <button class="btn-accept" onclick="acceptOrder(${index})">Accept Order (Terima)</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function acceptOrder(index) {
+            let orders = JSON.parse(localStorage.getItem('cafe_orders')) || [];
+            let acceptedOrder = orders[index];
+            
+            // Pindahkan ke senarai yang telah diterima (boleh guna key lain untuk dapur/admin jika perlu)
+            let acceptedList = JSON.parse(localStorage.getItem('cafe_accepted_orders')) || [];
+            acceptedList.push(acceptedOrder);
+            localStorage.setItem('cafe_accepted_orders', JSON.stringify(acceptedList));
+
+            // Buang dari senarai pesanan aktif sementara
+            orders.splice(index, 1);
+            localStorage.setItem('cafe_orders', JSON.stringify(orders));
+
+            loadCashierOrders();
+            alert('Pesanan telah diterima dan dihantar ke sistem dapur!');
+        }
+
+        loadCashierOrders();
+        
+        // Semak pesanan baru setiap 2 saat secara live
+        setInterval(loadCashierOrders, 2000);
+    </script>
+</body>
+</html>
